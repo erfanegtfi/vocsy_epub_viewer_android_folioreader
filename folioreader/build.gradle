@@ -2,23 +2,6 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-parcelize'
 
-
-ext {
-    publishedGroupId = 'com.jideguru'
-    libraryName = 'FolioReader'
-    artifact = 'folioreader'
-    libraryDescription = 'An epub reader for Android'
-    siteUrl = 'https://github.com/FolioReader/FolioReader-Android'
-    gitUrl = 'https://github.com/FolioReader/FolioReader-Android.git'
-    libraryVersion = versions.folioreaderSdk
-    developerId = 'mobisystech'
-    developerName = 'Folio Reader'
-    developerEmail = 'mahavir@codetoart.com'
-    licenseName = 'FreeBSD License'
-    licenseUrl = 'https://en.wikipedia.org/wiki/FreeBSD_Documentation_License#License'
-    allLicenses = ["FreeBSD"]
-}
-
 android {
     namespace "com.folioreader"
     useLibrary 'org.apache.http.legacy'
@@ -66,11 +49,11 @@ android {
         lintConfig file("lint.xml")
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 
-    kotlinOptions { jvmTarget = 1.8 }
+    kotlinOptions { jvmTarget = 11 }
 
 }
 dependencies {
