@@ -21,6 +21,7 @@ import com.folioreader.model.HighlightImpl;
 import com.folioreader.ui.view.UnderlinedTextView;
 import com.folioreader.util.AppUtil;
 import com.folioreader.util.UiUtil;
+import com.folioreader.util.UtilsDateFormat;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class HighlightAdapter extends RecyclerView.Adapter<HighlightAdapter.High
         holder.content.setText(Html.fromHtml(getItem(position).getContent()));
         UiUtil.setBackColorToTextView(holder.content,
                 getItem(position).getType());
-        holder.date.setText(AppUtil.formatDate(getItem(position).getDate()));
+        holder.date.setText(UtilsDateFormat.getDateTime(getItem(position).getDate(), UtilsDateFormat.DateConvertType.DATE_TIME));
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

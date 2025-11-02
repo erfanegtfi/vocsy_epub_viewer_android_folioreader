@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager
 import com.folioreader.Config
@@ -19,7 +20,6 @@ import com.folioreader.R
 import com.folioreader.model.event.MediaOverlayHighlightStyleEvent
 import com.folioreader.model.event.MediaOverlaySpeedEvent
 import com.folioreader.ui.view.MediaControllerCallback
-import com.folioreader.ui.view.StyleableTextView
 import com.folioreader.util.AppUtil
 import com.folioreader.util.UiUtil
 import com.google.android.material.bottomsheet.BottomSheetBehavior
@@ -62,13 +62,13 @@ class MediaControllerFragment : BottomSheetDialogFragment() {
     private var playPauseButton: ImageButton? = null
     private var nextButton: ImageButton? = null
     private var playbackSpeedLayout: LinearLayout? = null
-    private var btnHalfSpeed: StyleableTextView? = null
-    private var btnOneXSpeed: StyleableTextView? = null
-    private var btnOneAndHalfSpeed: StyleableTextView? = null
-    private var btnTwoXSpeed: StyleableTextView? = null
-    private var btnBackColorStyle: StyleableTextView? = null
-    private var btnTextUnderlineStyle: StyleableTextView? = null
-    private var btnTextColorStyle: StyleableTextView? = null
+    private var btnHalfSpeed: TextView? = null
+    private var btnOneXSpeed: TextView? = null
+    private var btnOneAndHalfSpeed: TextView? = null
+    private var btnTwoXSpeed: TextView? = null
+    private var btnBackColorStyle: TextView? = null
+    private var btnTextUnderlineStyle: TextView? = null
+    private var btnTextColorStyle: TextView? = null
 
     @SuppressLint("UseRequireInsteadOfGet")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

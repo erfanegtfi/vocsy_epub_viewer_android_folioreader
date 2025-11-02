@@ -1,7 +1,11 @@
 package com.folioreader.util
 
+import android.content.Context
 import android.os.Environment
+import androidx.annotation.FontRes
+import androidx.annotation.RawRes
 import java.io.File
+import java.io.FileOutputStream
 
 /**
  * @author Tyler Sedlar
@@ -58,6 +62,23 @@ object FontFinder {
             }
         }
         return fonts
+    }
+
+    @JvmStatic
+    fun getFontFileFromRes(context: Context, fontResId: Int): File {
+        // 1️⃣ Create a temp file
+//        val outFile = File(context.cacheDir, "${context.resources.getResourceEntryName(fontResId)}.ttf")
+        val outFile = File(context.cacheDir, "$fontResId.ttf")
+
+        // 2️⃣ Copy from res/font to file
+        if(!outFile.exists())
+        context.resources.openRawResource(fontResId).use { input ->
+            FileOutputStream(outFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        return outFile
     }
 
     @JvmStatic

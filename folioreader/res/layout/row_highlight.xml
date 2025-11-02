@@ -39,7 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="20 sep 2016"
-            android:textColor="@color/black"
+            android:textColor="@color/gray_text"
             android:textSize="14sp"
             android:textStyle="bold" />
 
@@ -63,6 +63,7 @@
             android:layout_below="@+id/utv_highlight_content"
             android:ellipsize="end"
             android:text=""
+            android:layout_alignParentEnd="true"
             android:textColor="@color/black"
             android:textSize="14sp" />
     </RelativeLayout>

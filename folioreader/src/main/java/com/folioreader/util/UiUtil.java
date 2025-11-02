@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
@@ -49,32 +51,32 @@ public class UiUtil {
 
     private static final String LOG_TAG = UiUtil.class.getSimpleName();
 
-    public static void setCustomFont(View view, Context ctx, AttributeSet attrs,
-                                     int[] attributeSet, int fontId) {
-        TypedArray a = ctx.obtainStyledAttributes(attrs, attributeSet);
-        String customFont = a.getString(fontId);
-        setCustomFont(view, ctx, customFont);
-        a.recycle();
-    }
+//    public static void setCustomFont(View view, Context ctx, AttributeSet attrs,
+//                                     int[] attributeSet, int fontId) {
+//        TypedArray a = ctx.obtainStyledAttributes(attrs, attributeSet);
+//        String customFont = a.getString(fontId);
+//        setCustomFont(view, ctx, customFont);
+//        a.recycle();
+//    }
 
-    public static boolean setCustomFont(View view, Context ctx, String asset) {
-        if (TextUtils.isEmpty(asset))
-            return false;
-        Typeface tf = null;
-        try {
-            tf = getFont(ctx, asset);
-            if (view instanceof TextView) {
-                ((TextView) view).setTypeface(tf);
-            } else {
-                ((Button) view).setTypeface(tf);
-            }
-        } catch (Exception e) {
-            Log.e("AppUtil", "Could not get typeface  " + asset);
-            return false;
-        }
-
-        return true;
-    }
+//    public static boolean setCustomFont(View view, Context ctx, String asset) {
+//        if (TextUtils.isEmpty(asset))
+//            return false;
+//        Typeface tf = null;
+//        try {
+//            tf = getFont(ctx, asset);
+//            if (view instanceof TextView) {
+//                ((TextView) view).setTypeface(tf);
+//            } else {
+//                ((Button) view).setTypeface(tf);
+//            }
+//        } catch (Exception e) {
+//            Log.e("AppUtil", "Could not get typeface  " + asset);
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
     private static final Hashtable<String, SoftReference<Typeface>> fontCache = new Hashtable<>();
 
@@ -163,15 +165,33 @@ public class UiUtil {
     }
 
     public static void setColorIntToDrawable(@ColorInt int color, Drawable drawable) {
-        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        if (drawable == null) return;
+        drawable.mutate();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            drawable.setColorFilter(new BlendModeColorFilter(color, BlendMode.SRC_ATOP));
+        } else {
+            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
     public static void setColorResToDrawable(@ColorRes int colorResId, Drawable drawable) {
+        if (drawable == null) return;
+
         try {
-            int color = ContextCompat.getColor(AppContext.get(), colorResId);
-            drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+            Context context = AppContext.get();
+            int color = ContextCompat.getColor(context, colorResId);
+            drawable.mutate(); // prevents affecting other instances of the same drawable
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10+ (API 29)
+                drawable.setColorFilter(new BlendModeColorFilter(color, BlendMode.SRC_ATOP));
+            } else {
+                // Older versions
+                drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+            }
+
         } catch (Resources.NotFoundException e) {
-            Log.e(LOG_TAG, "-> Exception in setColorResToDrawable -> ", e);
+            Log.e(LOG_TAG, "Exception in setColorResToDrawable", e);
         }
     }
 

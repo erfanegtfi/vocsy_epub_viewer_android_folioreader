@@ -361,7 +361,7 @@ class FolioWebView : WebView {
             }
             R.id.defineSelection -> {
                 Log.d(LOG_TAG, "-> onTextSelectionItemClicked: defineSelection -> $selectedText")
-                uiHandler.post { showDictDialog(selectedText) }
+//                uiHandler.post { showDictDialog(selectedText) }
             }
             R.id.yellowHighlight -> {
                 Log.d(LOG_TAG, "-> onTextSelectionItemClicked: yellowHighlight -> $selectedText")
