@@ -24,6 +24,7 @@ public class Config implements Parcelable {
     public static final String CONFIG_FONT = "font";
     public static final String CONFIG_FONT_SIZE = "font_size";
     public static final String CONFIG_IS_NIGHT_MODE = "is_night_mode";
+    public static final String CONFIG_IS_BOOKMARKED = "is_bookmarked";
     public static final String CONFIG_THEME_COLOR_INT = "theme_color_int";
     public static final String CONFIG_NIGHT_THEME_COLOR_INT = "night_theme_color_int";
     public static final String CONFIG_IS_TTS = "is_tts";
@@ -39,6 +40,7 @@ public class Config implements Parcelable {
     private String font = "Roboto";
     private int fontSize = 2;
     private boolean nightMode;
+    private boolean isBookmarked;
     @ColorInt
     private int themeColor = DEFAULT_THEME_COLOR_INT;
     private int nightThemeColor = themeColor;
@@ -85,6 +87,7 @@ public class Config implements Parcelable {
         bundle.putString(CONFIG_FONT, font);
         bundle.putInt(CONFIG_FONT_SIZE, fontSize);
         bundle.putBoolean(CONFIG_IS_NIGHT_MODE, nightMode);
+        bundle.putBoolean(CONFIG_IS_BOOKMARKED, isBookmarked);
         bundle.putInt(CONFIG_THEME_COLOR_INT, themeColor);
         bundle.putInt(CONFIG_NIGHT_THEME_COLOR_INT, nightThemeColor);
         bundle.putBoolean(CONFIG_IS_TTS, showTts);
@@ -106,6 +109,7 @@ public class Config implements Parcelable {
                 font = getBundleItem(bundle, CONFIG_FONT, "Roboto");
                 fontSize = getBundleItem(bundle, CONFIG_FONT_SIZE, 2);
                 nightMode = getBundleItem(bundle, CONFIG_IS_NIGHT_MODE, false);
+                isBookmarked = getBundleItem(bundle, CONFIG_IS_BOOKMARKED, false);
                 themeColor = getBundleItem(bundle, CONFIG_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT);
                 nightThemeColor = getBundleItem(bundle, CONFIG_NIGHT_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT);
                 showTts = getBundleItem(bundle, CONFIG_IS_TTS, true);
@@ -130,6 +134,7 @@ public class Config implements Parcelable {
         font = "Roboto";
         fontSize = 2;
         nightMode = false;
+        isBookmarked = false;
         themeColor = DEFAULT_THEME_COLOR_INT;
         nightThemeColor = themeColor;
         showTts = true;
@@ -158,6 +163,7 @@ public class Config implements Parcelable {
         }
         fontSize = getJsonItem(obj, CONFIG_FONT_SIZE, 2);
         nightMode = getJsonItem(obj, CONFIG_IS_NIGHT_MODE, false);
+        isBookmarked = getJsonItem(obj, CONFIG_IS_BOOKMARKED, false);
         themeColor = getValidColorInt(getJsonItem(obj, CONFIG_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT));
         nightThemeColor = getValidColorInt(getJsonItem(obj, CONFIG_NIGHT_THEME_COLOR_INT, DEFAULT_THEME_COLOR_INT));
         showTts = getJsonItem(obj, CONFIG_IS_TTS, true);
@@ -308,6 +314,15 @@ public class Config implements Parcelable {
         return this;
     }
 
+    public boolean isBookmarked() {
+        return isBookmarked;
+    }
+
+    public Config setBookmarked(boolean isBookmarked) {
+        this.isBookmarked = isBookmarked;
+        return this;
+    }
+
     public boolean isShowTextSelection() {
         return showTextSelection;
     }
@@ -412,6 +427,7 @@ public class Config implements Parcelable {
                 "font=" + font +
                 ", fontSize=" + fontSize +
                 ", nightMode=" + nightMode +
+                ", isBookmarked=" + isBookmarked +
                 ", themeColor=" + themeColor +
                 ", nightThemeColor=" + nightThemeColor +
                 ", showTts=" + showTts +

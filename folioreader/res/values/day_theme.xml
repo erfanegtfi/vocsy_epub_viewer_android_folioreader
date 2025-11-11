@@ -9,7 +9,9 @@
         <item name="colorAccent">@color/default_theme_accent_color</item>
         <item name="actionBarStyle">@style/FolioActivityDayTheme.ActionBarStyle</item>
         <item name="toolbarStyle">@style/ToolbarStyle</item>
-        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/black</item>
+        <item name="android:statusBarColor" >@color/black</item>
+        <item name="fontFamily">@font/vazirmatn_regular</item>
+        <item name="android:fontFamily">@font/vazirmatn_regular</item>
     </style>
 
     <style name="FolioActivityDayTheme.ActionBarStyle" parent="@style/Widget.AppCompat.ActionBar.Solid">
@@ -39,7 +41,7 @@
         <item name="android:colorBackground">@color/day_background_color</item>
         <item name="colorAccent">@color/default_theme_accent_color</item>
         <item name="actionBarStyle">@style/ActionBarDayStyle</item>
-        <item name="android:statusBarColor" tools:targetApi="lollipop">@color/black</item>
+        <item name="android:statusBarColor" >@color/black</item>
 
         <item name="defaultFontColor">@color/day_default_font_color</item>
         <item name="android:textViewStyle">@style/TextViewStyle</item>

@@ -66,7 +66,7 @@ public final class HtmlUtil {
         // Inject CSS & user font style
         String toInject = "\n" + cssPath + "\n" + jsPath + "\n";
 
-        File userFontFile = FontFinder.getFontFileFromRes(context, R.font.vazirmatn_medium);
+        File userFontFile = FontFinder.getFontFileFromRes(context, R.font.vazirmatn_regular);
         if (userFontFile != null) {
             System.out.println("Injected user font into CSS");
             System.out.println("  - path: " + userFontFile.getAbsolutePath());

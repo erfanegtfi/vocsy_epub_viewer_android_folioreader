@@ -19,6 +19,8 @@ import com.folioreader.network.R2StreamerApi;
 import com.folioreader.ui.activity.FolioActivity;
 import com.folioreader.ui.base.OnSaveHighlight;
 import com.folioreader.ui.base.SaveReceivedHighlightTask;
+import com.folioreader.util.OnBookmarkListener;
+import com.folioreader.util.OnClosedListener;
 import com.folioreader.util.OnHighlightListener;
 import com.folioreader.util.ReadLocatorListener;
 
@@ -45,6 +47,7 @@ public class FolioReader {
     public static final String ACTION_SAVE_READ_LOCATOR = "com.folioreader.action.SAVE_READ_LOCATOR";
     public static final String ACTION_CLOSE_FOLIOREADER = "com.folioreader.action.CLOSE_FOLIOREADER";
     public static final String ACTION_FOLIOREADER_CLOSED = "com.folioreader.action.FOLIOREADER_CLOSED";
+    public static final String ACTION_FOLIOREADER_BOOKMARK= "com.folioreader.action.FOLIOREADER_BOOKMARK";
 
     private Context context;
     private Config config;
@@ -53,6 +56,7 @@ public class FolioReader {
     private OnHighlightListener onHighlightListener;
     private ReadLocatorListener readLocatorListener;
     private OnClosedListener onClosedListener;
+    private OnBookmarkListener onBookmarkListener;
     private ReadLocator readLocator;
 
     @Nullable
@@ -60,17 +64,8 @@ public class FolioReader {
     @Nullable
     public R2StreamerApi r2StreamerApi;
 
-    public interface OnClosedListener {
-        /**
-         * You may call {@link FolioReader#clear()} in this method, if you wouldn't require to open
-         * an epub again from the current activity.
-         * Or you may call {@link FolioReader#stop()} in this method, if you wouldn't require to open
-         * an epub again from your application.
-         */
-        void onFolioReaderClosed();
-    }
 
-    private BroadcastReceiver highlightReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver highlightReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             HighlightImpl highlightImpl = intent.getParcelableExtra(HighlightImpl.INTENT);
@@ -82,7 +77,7 @@ public class FolioReader {
         }
     };
 
-    private BroadcastReceiver readLocatorReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver readLocatorReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
 
@@ -93,11 +88,21 @@ public class FolioReader {
         }
     };
 
-    private BroadcastReceiver closedReceiver = new BroadcastReceiver() {
+    private final BroadcastReceiver closedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (onClosedListener != null)
                 onClosedListener.onFolioReaderClosed();
+        }
+    };
+
+    private final BroadcastReceiver bookmarkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean bookmarked =
+                     intent.getBooleanExtra(FolioReader.ACTION_FOLIOREADER_BOOKMARK, false);
+            if (onBookmarkListener != null)
+                onBookmarkListener.onFolioReaderBookmarked(bookmarked);
         }
     };
 
@@ -130,6 +135,8 @@ public class FolioReader {
                 new IntentFilter(ACTION_SAVE_READ_LOCATOR));
         localBroadcastManager.registerReceiver(closedReceiver,
                 new IntentFilter(ACTION_FOLIOREADER_CLOSED));
+        localBroadcastManager.registerReceiver(bookmarkReceiver,
+                new IntentFilter(ACTION_FOLIOREADER_BOOKMARK));
     }
 
     public FolioReader openBook(String assetOrSdcardPath) {
@@ -245,6 +252,11 @@ public class FolioReader {
         return singleton;
     }
 
+    public FolioReader setBookmarkLocator(OnBookmarkListener onBookmarkListener) {
+        this.onBookmarkListener = onBookmarkListener;
+        return singleton;
+    }
+
     public void saveReceivedHighLights(List<HighLight> highlights,
                                        OnSaveHighlight onSaveHighlight) {
         new SaveReceivedHighlightTask(onSaveHighlight, highlights).execute();
@@ -297,5 +309,6 @@ public class FolioReader {
         localBroadcastManager.unregisterReceiver(highlightReceiver);
         localBroadcastManager.unregisterReceiver(readLocatorReceiver);
         localBroadcastManager.unregisterReceiver(closedReceiver);
+        localBroadcastManager.unregisterReceiver(bookmarkReceiver);
     }
 }
