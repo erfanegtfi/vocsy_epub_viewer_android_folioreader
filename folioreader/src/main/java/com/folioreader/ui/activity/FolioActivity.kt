@@ -308,48 +308,48 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 
         if (SDK_INT >= 33) {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(
-                        this, Manifest.permission.READ_MEDIA_IMAGES
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this, getWriteExternalStoragePerms(), for_35
-                    )
-                } else {
-                    setupBook()
-                }
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.READ_MEDIA_IMAGES
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this, getWriteExternalStoragePerms(), for_35
+                )
+            } else {
+                setupBook()
+            }
 //            } else {
 //                setupBook()
 //            }
 
         } else if (SDK_INT >= 30) {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(
-                        this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this, getWriteExternalStoragePerms(), WRITE_EXTERNAL_STORAGE_REQUEST
-                    )
-                } else {
-                    setupBook()
-                }
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this, getWriteExternalStoragePerms(), WRITE_EXTERNAL_STORAGE_REQUEST
+                )
+            } else {
+                setupBook()
+            }
 //            } else {
 //                setupBook()
 //            }
 
         } else {
 //            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-                if (ContextCompat.checkSelfPermission(
-                        this, Manifest.permission.WRITE_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this, getWriteExternalStoragePerms(), WRITE_EXTERNAL_STORAGE_REQUEST
-                    )
-                } else {
-                    setupBook()
-                }
+            if (ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this, getWriteExternalStoragePerms(), WRITE_EXTERNAL_STORAGE_REQUEST
+                )
+            } else {
+                setupBook()
+            }
 //            } else {
 //                setupBook()
 //            }
@@ -467,7 +467,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //                }
 //            }
 
-            if(isBookmarked == true)
+            if (isBookmarked == true)
                 menu.findItem(R.id.itemBookmark).setIcon(R.drawable.ic_filled_bookmark)
 
             UiUtil.setColorIntToDrawable(
@@ -498,6 +498,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 startContentHighlightActivity()
                 return true
             }
+
             R.id.itemBookmark -> {
 //                val readLocator = currentFragment!!.getLastReadLocator()
 //                Log.v(LOG_TAG, "-> onOptionsItemSelected 'if' -> bookmark")
@@ -540,19 +541,25 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //                    }
 //                    dialog.dismiss()
 //                }
-                isBookmarked = !(isBookmarked?:false)
-                if(isBookmarked == true)
+                isBookmarked = !(isBookmarked ?: false)
+                if (isBookmarked == true)
                     item.setIcon(R.drawable.ic_filled_bookmark)
-                else  item.setIcon(R.drawable.ic_baseline_bookmark_border_24)
+                else item.setIcon(R.drawable.ic_baseline_bookmark_border_24)
+
+                val config = AppUtil.getSavedConfig(applicationContext)!!
+                UiUtil.setColorIntToDrawable(
+                    config.currentThemeColor, item.icon
+                )
 
                 val localBroadcastManager = LocalBroadcastManager.getInstance(this)
                 val intent = Intent(FolioReader.ACTION_FOLIOREADER_BOOKMARK)
-                intent.putExtra(FolioReader.ACTION_FOLIOREADER_BOOKMARK ,isBookmarked )
+                intent.putExtra(FolioReader.ACTION_FOLIOREADER_BOOKMARK, isBookmarked)
 
                 localBroadcastManager.sendBroadcast(intent)
 
                 return true
             }
+
             R.id.itemSearch -> {
                 Log.v(LOG_TAG, "-> onOptionsItemSelected -> " + item.title)
                 if (searchUri == null) return true
@@ -565,17 +572,20 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 return true
 
             }
+
             R.id.itemConfig -> {
                 Log.v(LOG_TAG, "-> onOptionsItemSelected -> " + item.title)
                 showConfigBottomSheetDialogFragment()
                 return true
 
             }
+
             R.id.itemTts -> {
                 Log.v(LOG_TAG, "-> onOptionsItemSelected -> " + item.title)
                 showMediaController()
                 return true
             }
+
             else -> return super.onOptionsItemSelected(item)
         }
 
@@ -651,10 +661,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 val epubParser = EpubParser()
                 epubParser.parse(path!!, "")
             }
+
             Publication.EXTENSION.CBZ -> {
                 val cbzParser = CbzParser()
                 cbzParser.parse(path!!, "")
             }
+
             else -> {
                 null
             }
@@ -888,36 +900,21 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private fun showSystemUI() {
         Log.v(LOG_TAG, "-> showSystemUI")
 
-        if (Build.VERSION.SDK_INT >= 16) {
-            val decorView = window.decorView
-            decorView.systemUiVisibility =
-                (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
-        } else {
-            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
-            if (appBarLayout != null) appBarLayout!!.setTopMargin(statusBarHeight)
-            onSystemUiVisibilityChange(View.SYSTEM_UI_FLAG_VISIBLE)
-        }
+        val decorView = window.decorView
+        decorView.systemUiVisibility =
+            (View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
     }
 
     private fun hideSystemUI() {
         Log.v(LOG_TAG, "-> hideSystemUI")
 
-        if (Build.VERSION.SDK_INT >= 16) {
-            val decorView = window.decorView
-            decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
-                    // Set the content to appear under the system bars so that the
-                    // content doesn't resize when the system bars hide and show.
-                    or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                    // Hide the nav bar and status bar
-                    or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN)
-        } else {
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-            )
-            // Specified 1 just to mock anything other than View.SYSTEM_UI_FLAG_VISIBLE
-            onSystemUiVisibilityChange(1)
-        }
+        val decorView = window.decorView
+        decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_IMMERSIVE
+                // Set the content to appear under the system bars so that the
+                // content doesn't resize when the system bars hide and show.
+                or View.SYSTEM_UI_FLAG_LAYOUT_STABLE or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                // Hide the nav bar and status bar
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or View.SYSTEM_UI_FLAG_FULLSCREEN)
     }
 
     override fun getEntryReadLocator(): ReadLocator? {
@@ -984,6 +981,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     goToChapter(data.getStringExtra(SELECTED_CHAPTER_POSITION)!!)
 
                 }
+
                 HIGHLIGHT_SELECTED -> {
                     val highlightImpl = data.getParcelableExtra<HighlightImpl>(HIGHLIGHT_ITEM)
                     currentChapterIndex = highlightImpl!!.pageNumber
@@ -991,6 +989,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                     val folioPageFragment = currentFragment ?: return
                     folioPageFragment.scrollToHighlightId(highlightImpl.rangy)
                 }
+
                 BOOKMARK_SELECTED -> {
                     val bookmark =
                         data.getSerializableExtra(BOOKMARK_ITEM) as HashMap<String, String>
@@ -1207,7 +1206,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             )
         )
     }
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
