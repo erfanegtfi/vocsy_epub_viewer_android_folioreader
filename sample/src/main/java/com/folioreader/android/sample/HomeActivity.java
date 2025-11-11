@@ -33,6 +33,8 @@ import com.folioreader.model.HighLight;
 import com.folioreader.model.locators.ReadLocator;
 import com.folioreader.ui.base.OnSaveHighlight;
 import com.folioreader.util.AppUtil;
+import com.folioreader.util.OnBookmarkListener;
+import com.folioreader.util.OnClosedListener;
 import com.folioreader.util.OnHighlightListener;
 import com.folioreader.util.ReadLocatorListener;
 
@@ -44,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements OnHighlightListener, ReadLocatorListener, FolioReader.OnClosedListener {
+        implements OnHighlightListener, ReadLocatorListener, OnBookmarkListener, OnClosedListener {
 
     private static final String LOG_TAG = HomeActivity.class.getSimpleName();
     private FolioReader folioReader;
@@ -57,6 +59,7 @@ public class HomeActivity extends AppCompatActivity
         folioReader = FolioReader.get()
                 .setOnHighlightListener(this)
                 .setReadLocatorListener(this)
+                .setBookmarkLocator(this)
                 .setOnClosedListener(this);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -69,6 +72,7 @@ public class HomeActivity extends AppCompatActivity
                 Config config = AppUtil.getSavedConfig(getApplicationContext());
                 if (config == null)
                     config = new Config();
+                config.setBookmarked(true);
                 config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
 
                 folioReader.setConfig(config, true)
@@ -89,7 +93,7 @@ public class HomeActivity extends AppCompatActivity
                 config.setNightThemeColorInt(Color.parseColor("#FFFFFF"));
                 config.setShowRemainingIndicator(true);
                 config.setShowTextSelection(false);
-
+                config.setBookmarked(true);
                 folioReader.setReadLocator(readLocator);
                 folioReader.setConfig(config, true)
                         .openBook("file:///android_asset/john.epub");
@@ -99,6 +103,7 @@ public class HomeActivity extends AppCompatActivity
         Config config = AppUtil.getSavedConfig(getApplicationContext());
         if (config == null)
             config = new Config();
+        config.setBookmarked(true);
         config.setAllowedDirection(Config.AllowedDirection.VERTICAL_AND_HORIZONTAL);
 
         folioReader.setConfig(config, true)
@@ -221,5 +226,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onFolioReaderClosed() {
         Log.v(LOG_TAG, "-> onFolioReaderClosed");
+    }
+
+    @Override
+    public void onFolioReaderBookmarked(boolean isBookmarked) {
+        Log.v(LOG_TAG, "-> onFolioReaderBookmarked " + isBookmarked);
     }
 }

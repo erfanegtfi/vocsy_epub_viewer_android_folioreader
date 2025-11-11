@@ -18,7 +18,6 @@ package com.folioreader.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.app.ActivityManager
-import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -33,12 +32,10 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.Handler
-import android.os.Parcelable
 import android.text.TextUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
@@ -59,7 +56,6 @@ import com.folioreader.model.HighlightImpl
 import com.folioreader.model.event.MediaOverlayPlayPauseEvent
 import com.folioreader.model.locators.ReadLocator
 import com.folioreader.model.locators.SearchLocator
-import com.folioreader.model.sqlite.BookmarkTable
 import com.folioreader.ui.adapter.FolioPageFragmentAdapter
 import com.folioreader.ui.adapter.SearchAdapter
 import com.folioreader.ui.fragment.FolioPageFragment
@@ -81,9 +77,9 @@ import org.readium.r2.streamer.parser.EpubParser
 import org.readium.r2.streamer.parser.PubBox
 import org.readium.r2.streamer.server.Server
 import java.lang.ref.WeakReference
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
+import androidx.core.graphics.drawable.toDrawable
 
 class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControllerCallback,
     View.OnSystemUiVisibilityChangeListener {
@@ -111,6 +107,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
     private var spine: List<Link>? = null
 
     private var mBookId: String? = null
+
+    private var isBookmarked: Boolean? = null
     private var mEpubFilePath: String? = null
     private var mEpubSourceType: EpubSourceType? = null
     private var mEpubRawId = 0
@@ -284,6 +282,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         }
 
         mBookId = intent.getStringExtra(FolioReader.EXTRA_BOOK_ID)
+        val intentConfig: Config? = intent.getParcelableExtra<Config>(Config.INTENT_CONFIG)
+        isBookmarked = intentConfig?.isBookmarked ?: false
         mEpubSourceType = intent.extras!!.getSerializable(INTENT_EPUB_SOURCE_TYPE) as EpubSourceType
         if (mEpubSourceType == EpubSourceType.RAW) {
             mEpubRawId = intent.extras!!.getInt(INTENT_EPUB_SOURCE_PATH)
@@ -355,11 +355,6 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //            }
 
         }
-
-
-
-
-
     }
 
     private fun initActionBar() {
@@ -379,29 +374,23 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         } else {
             setDayMode()
         }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            val color: Int = if (config.isNightMode) {
-                ContextCompat.getColor(this, R.color.black)
-            } else {
-                val attrs = intArrayOf(android.R.attr.navigationBarColor)
-                val typedArray = theme.obtainStyledAttributes(attrs)
-                typedArray.getColor(0, ContextCompat.getColor(this, R.color.white))
-            }
-            window.navigationBarColor = color
+        isBookmarked
+        val color: Int = if (config.isNightMode) {
+            ContextCompat.getColor(this, R.color.black)
+        } else {
+            val attrs = intArrayOf(android.R.attr.navigationBarColor)
+            val typedArray = theme.obtainStyledAttributes(attrs)
+            typedArray.getColor(0, ContextCompat.getColor(this, R.color.white))
         }
+        window.navigationBarColor = color
 
-        if (Build.VERSION.SDK_INT < 16) {
-            // Fix for appBarLayout.fitSystemWindows() not being called on API < 16
-            appBarLayout!!.setTopMargin(statusBarHeight)
-        }
     }
 
     override fun setDayMode() {
         Log.v(LOG_TAG, "-> setDayMode")
 
         actionBar!!.setBackgroundDrawable(
-            ColorDrawable(ContextCompat.getColor(this, R.color.white))
+            ContextCompat.getColor(this, R.color.white).toDrawable()
         )
 
         toolbar!!.setTitleTextColor(ContextCompat.getColor(this, R.color.black))
@@ -478,6 +467,8 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
 //                }
 //            }
 
+            if(isBookmarked == true)
+                menu.findItem(R.id.itemBookmark).setIcon(R.drawable.ic_filled_bookmark)
 
             UiUtil.setColorIntToDrawable(
                 config.currentThemeColor, menu.findItem(R.id.itemBookmark).icon
@@ -508,48 +499,57 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
                 return true
             }
             R.id.itemBookmark -> {
-                val readLocator = currentFragment!!.getLastReadLocator()
-                Log.v(LOG_TAG, "-> onOptionsItemSelected 'if' -> bookmark")
+//                val readLocator = currentFragment!!.getLastReadLocator()
+//                Log.v(LOG_TAG, "-> onOptionsItemSelected 'if' -> bookmark")
+//
+//                bookmarkReadLocator = readLocator
+//                val localBroadcastManager = LocalBroadcastManager.getInstance(this)
+//                val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
+//                intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, readLocator as Parcelable?)
+//                localBroadcastManager.sendBroadcast(intent)
+//                val dialog = Dialog(this, R.style.DialogCustomTheme)
+//                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+//                dialog.setContentView(R.layout.dialog_bookmark)
+//                dialog.show()
+//                dialog.setCanceledOnTouchOutside(true)
+//                dialog.setOnCancelListener {
+//                    Toast.makeText(
+//                        this, "please enter a Bookmark name and then press Save", Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//                dialog.findViewById<View>(R.id.btn_save_bookmark).setOnClickListener {
+//                    val name =
+//                        (dialog.findViewById<View>(R.id.bookmark_name) as EditText).text.toString()
+//                    if (!TextUtils.isEmpty(name)) {
+//                        val simpleDateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+//                        val id = BookmarkTable(this).insertBookmark(
+//                            mBookId,
+//                            simpleDateFormat.format(Date()),
+//                            name,
+//                            bookmarkReadLocator!!.toJson().toString()
+//                        )
+//                        Toast.makeText(
+//                            this, getString(R.string.book_mark_success), Toast.LENGTH_SHORT
+//                        ).show()
+//                    } else {
+//                        Toast.makeText(
+//                            this,
+//                            "please Enter a Bookmark name and then press Save",
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    }
+//                    dialog.dismiss()
+//                }
+                isBookmarked = !(isBookmarked?:false)
+                if(isBookmarked == true)
+                    item.setIcon(R.drawable.ic_filled_bookmark)
+                else  item.setIcon(R.drawable.ic_baseline_bookmark_border_24)
 
-                bookmarkReadLocator = readLocator
                 val localBroadcastManager = LocalBroadcastManager.getInstance(this)
-                val intent = Intent(FolioReader.ACTION_SAVE_READ_LOCATOR)
-                intent.putExtra(FolioReader.EXTRA_READ_LOCATOR, readLocator as Parcelable?)
-                localBroadcastManager.sendBroadcast(intent)
-                val dialog = Dialog(this, R.style.DialogCustomTheme)
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog.setContentView(R.layout.dialog_bookmark)
-                dialog.show()
-                dialog.setCanceledOnTouchOutside(true)
-                dialog.setOnCancelListener {
-                    Toast.makeText(
-                        this, "please enter a Bookmark name and then press Save", Toast.LENGTH_SHORT
-                    ).show()
-                }
-                dialog.findViewById<View>(R.id.btn_save_bookmark).setOnClickListener {
-                    val name =
-                        (dialog.findViewById<View>(R.id.bookmark_name) as EditText).text.toString()
-                    if (!TextUtils.isEmpty(name)) {
-                        val simpleDateFormat = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
-                        val id = BookmarkTable(this).insertBookmark(
-                            mBookId,
-                            simpleDateFormat.format(Date()),
-                            name,
-                            bookmarkReadLocator!!.toJson().toString()
-                        )
-                        Toast.makeText(
-                            this, getString(R.string.book_mark_success), Toast.LENGTH_SHORT
-                        ).show()
-                    } else {
-                        Toast.makeText(
-                            this,
-                            "please Enter a Bookmark name and then press Save",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                    dialog.dismiss()
-                }
+                val intent = Intent(FolioReader.ACTION_FOLIOREADER_BOOKMARK)
+                intent.putExtra(FolioReader.ACTION_FOLIOREADER_BOOKMARK ,isBookmarked )
 
+                localBroadcastManager.sendBroadcast(intent)
 
                 return true
             }
