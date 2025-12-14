@@ -52,7 +52,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:minWidth="90dp"
+                android:minWidth="100dp"
                 android:padding="5dp"
                 android:text="@string/contents"
                 android:textSize="16sp" />
@@ -75,8 +75,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:minWidth="90dp"
+                android:minWidth="100dp"
                 android:padding="5dp"
+                android:visibility="gone"
                 android:text="@string/bookmarks"
                 android:textSize="16sp" />
 
