@@ -374,6 +374,12 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             itemBookmark?.setImageResource(R.drawable.ic_filled_bookmark)
         else itemBookmark?.setImageResource(R.drawable.ic_baseline_bookmark_border_24)
 
+        val config = AppUtil.getSavedConfig(applicationContext)!!
+
+        UiUtil.setColorIntToDrawable(config.themeColor, home?.drawable)
+        UiUtil.setColorIntToDrawable(config.themeColor, itemBookmark?.drawable)
+        UiUtil.setColorIntToDrawable(config.themeColor, itemConfig?.drawable)
+        titleApp?.text = title
         home?.setOnClickListener {
             startContentHighlightActivity()
         }
