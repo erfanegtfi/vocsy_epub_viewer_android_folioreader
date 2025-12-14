@@ -418,7 +418,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         Log.v(LOG_TAG, "-> setNightMode")
 
         actionBar!!.setBackgroundDrawable(
-            ColorDrawable(ContextCompat.getColor(this, R.color.black))
+            ContextCompat.getColor(this, R.color.black).toDrawable()
         )
 
         toolbar!!.setTitleTextColor(ContextCompat.getColor(this, R.color.night_title_text_color))
