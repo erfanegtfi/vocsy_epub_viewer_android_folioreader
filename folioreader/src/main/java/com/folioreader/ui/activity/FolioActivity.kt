@@ -374,7 +374,7 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
         } else {
             setDayMode()
         }
-        isBookmarked
+//        isBookmarked
         val color: Int = if (config.isNightMode) {
             ContextCompat.getColor(this, R.color.black)
         } else {
@@ -470,18 +470,18 @@ class FolioActivity : AppCompatActivity(), FolioActivityCallback, MediaControlle
             if (isBookmarked == true)
                 menu.findItem(R.id.itemBookmark).setIcon(R.drawable.ic_filled_bookmark)
 
-//            UiUtil.setColorIntToDrawable(
-//                config.currentThemeColor, menu.findItem(R.id.itemBookmark).icon
-//            )
-//            UiUtil.setColorIntToDrawable(
-//                config.currentThemeColor, menu.findItem(R.id.itemSearch).icon
-//            )
-//            UiUtil.setColorIntToDrawable(
-//                config.currentThemeColor, menu.findItem(R.id.itemConfig).icon
-//            )
-//            UiUtil.setColorIntToDrawable(config.currentThemeColor, menu.findItem(R.id.itemTts).icon)
-//
-//            if (!config.isShowTts) menu.findItem(R.id.itemTts).isVisible = false
+            UiUtil.setColorIntToDrawable(
+                config.currentThemeColor, menu.findItem(R.id.itemBookmark).icon
+            )
+            UiUtil.setColorIntToDrawable(
+                config.currentThemeColor, menu.findItem(R.id.itemSearch).icon
+            )
+            UiUtil.setColorIntToDrawable(
+                config.currentThemeColor, menu.findItem(R.id.itemConfig).icon
+            )
+            UiUtil.setColorIntToDrawable(config.currentThemeColor, menu.findItem(R.id.itemTts).icon)
+
+            if (!config.isShowTts) menu.findItem(R.id.itemTts).isVisible = false
         } catch (e: Exception) {
             Log.e("FOLIOREADER", e.message.toString())
         }

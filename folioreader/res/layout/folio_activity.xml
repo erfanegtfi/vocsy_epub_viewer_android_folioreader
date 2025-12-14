@@ -36,6 +36,14 @@
 
     </com.folioreader.ui.view.FolioAppBarLayout>
 
+    <ImageView
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_baseline_bookmark_border_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="100dp"
+        android:layout_height="wrap_content"/>
+
     <TextView
         android:id="@+id/pageCount"
         android:layout_width="wrap_content"
